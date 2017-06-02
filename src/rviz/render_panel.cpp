@@ -30,6 +30,8 @@
 #include <QApplication>
 #include <QMenu>
 #include <QTimer>
+#include <QLabel>
+#include <QVBoxLayout>
 
 #include <OgreSceneManager.h>
 #include <OgreCamera.h>
@@ -90,6 +92,20 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
 
   connect( fake_mouse_move_event_timer_, SIGNAL( timeout() ), this, SLOT( sendMouseMoveEvent() ));
   fake_mouse_move_event_timer_->start( 33 /*milliseconds*/ );
+  // add keyinme 2017-06-01
+  label_battery = new QLabel(this);
+  label_battery -> setText("Battery: 100%");
+  label_temperature = new QLabel(this);
+  label_temperature -> setText("Temperature: 37oC");
+  label_speed = new QLabel(this);
+  label_speed -> setText("Speed: 1m/s");
+
+/*  QVBoxLayout* Xbot_status_layout = new QVBoxLayout;
+  Xbot_status_layout->addWidget( label_battery );
+  Xbot_status_layout->addWidget( label_temperature );
+  Xbot_status_layout->addWidget( label_speed );
+*/
+
 }
 
 void RenderPanel::sendMouseMoveEvent()

@@ -40,6 +40,7 @@
 
 #include <vector>
 #include <map>
+#include <QLabel>
 
 namespace Ogre
 {
@@ -146,6 +147,10 @@ private Q_SLOTS:
 private:
   QTimer* fake_mouse_move_event_timer_;
   Ogre::Camera* default_camera_; ///< A default camera created in initialize().
+  // add keyinme 2017-06-01
+  QLabel* label_battery;
+  QLabel* label_temperature;
+  QLabel* label_speed;
 };
 
 } // namespace rviz
