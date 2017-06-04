@@ -36,6 +36,7 @@
 #include <OgreSceneManager.h>
 #include <OgreCamera.h>
 
+
 #include "rviz/display.h"
 #include "rviz/view_controller.h"
 #include "rviz/viewport_mouse_event.h"
@@ -92,19 +93,44 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
 
   connect( fake_mouse_move_event_timer_, SIGNAL( timeout() ), this, SLOT( sendMouseMoveEvent() ));
   fake_mouse_move_event_timer_->start( 33 /*milliseconds*/ );
+  
   // add keyinme 2017-06-01
   label_battery = new QLabel(this);
   label_battery -> setText("Battery: 100%");
+  //set Font color
+  QPalette pe;
+  pe.setColor(QPalette::WindowText,Qt::white);
+  label_battery -> setPalette(pe);
+  /*mutiple labels Problem: overlap
   label_temperature = new QLabel(this);
   label_temperature -> setText("Temperature: 37oC");
   label_speed = new QLabel(this);
-  label_speed -> setText("Speed: 1m/s");
+  label_speed -> setText("Speed: 1m/s");*/
 
 /*  QVBoxLayout* Xbot_status_layout = new QVBoxLayout;
   Xbot_status_layout->addWidget( label_battery );
   Xbot_status_layout->addWidget( label_temperature );
   Xbot_status_layout->addWidget( label_speed );
 */
+  
+  // add keyinme 2017-06-04
+  
+  //try method 1
+  //error: expected primary-expression before ‘,’ token QGridLayout *grid = new QGridLayout(RenderPanel,2,0);
+
+  /*QGrid* infoGrid = new QGrid(1);
+  label_battery = new QLabel("Battery:", infoGrid);
+  label_temperature = new QLabel("Temperature", infoGrid);
+  label_speed = new QLabel("Speed", infoGrid);*/
+
+  //try method 2:
+  //not working error: no matching function for call to ‘QGridLayout::QGridLayout(QWidget*&, int, int)’
+
+ /*QWidget *main = new QWidget;
+  QGridLayout *grid = new QGridLayout(main,2,0);
+  grid->addWidget(new QLabel("One",main),0,0);
+  grid->addWidget(new QLabel("Two",main),1,0);
+  grid->addWidget(new QLabel("Three",main)2,0);*/
 
 }
 

@@ -34,6 +34,7 @@
 
 #ifndef Q_MOC_RUN
 #include <OgreSceneManager.h>
+#include <qlayout.h>
 
 #include <boost/thread/mutex.hpp>
 #endif
@@ -41,6 +42,7 @@
 #include <vector>
 #include <map>
 #include <QLabel>
+#include <QPalette>
 
 namespace Ogre
 {
