@@ -32,6 +32,7 @@
 #include <QTimer>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QLayout>
 
 #include <OgreSceneManager.h>
 #include <OgreCamera.h>
@@ -94,44 +95,38 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
   connect( fake_mouse_move_event_timer_, SIGNAL( timeout() ), this, SLOT( sendMouseMoveEvent() ));
   fake_mouse_move_event_timer_->start( 33 /*milliseconds*/ );
   
-  // add keyinme 2017-06-01
+  // add keyinme 2017-06-06
+  QString bat_val = "18%";
+  QString temp_val = "37";
+  QString speed_val = "1m/s";
+
+  QString battery = "Battery: " + bat_val;
+  QString temperature = "Temperature: " + temp_val;
+  QString speed = "Speed: " + speed_val;
+
   label_battery = new QLabel(this);
-  label_battery -> setText("Battery: 100%");
+  label_battery -> setText(battery);
+  label_temperature = new QLabel(this);
+  label_temperature -> setText(temperature);
+  label_speed = new QLabel(this);
+  label_speed -> setText(speed);
+
+  label_battery -> setGeometry(0,0,100,15);
+  label_temperature -> setGeometry(0,20,120,15);
+  label_speed -> setGeometry(0,40,100,15);
+
   //set Font color
   QPalette pe;
   pe.setColor(QPalette::WindowText,Qt::white);
+  pe.setColor(QPalette::Window,Qt::gray);
   label_battery -> setPalette(pe);
-  /*mutiple labels Problem: overlap
-  label_temperature = new QLabel(this);
-  label_temperature -> setText("Temperature: 37oC");
-  label_speed = new QLabel(this);
-  label_speed -> setText("Speed: 1m/s");*/
+  label_temperature -> setPalette(pe);
+  label_speed -> setPalette(pe);
 
-/*  QVBoxLayout* Xbot_status_layout = new QVBoxLayout;
-  Xbot_status_layout->addWidget( label_battery );
-  Xbot_status_layout->addWidget( label_temperature );
-  Xbot_status_layout->addWidget( label_speed );
-*/
-  
-  // add keyinme 2017-06-04
-  
-  //try method 1
-  //error: expected primary-expression before ‘,’ token QGridLayout *grid = new QGridLayout(RenderPanel,2,0);
-
-  /*QGrid* infoGrid = new QGrid(1);
-  label_battery = new QLabel("Battery:", infoGrid);
-  label_temperature = new QLabel("Temperature", infoGrid);
-  label_speed = new QLabel("Speed", infoGrid);*/
-
-  //try method 2:
-  //not working error: no matching function for call to ‘QGridLayout::QGridLayout(QWidget*&, int, int)’
-
- /*QWidget *main = new QWidget;
-  QGridLayout *grid = new QGridLayout(main,2,0);
-  grid->addWidget(new QLabel("One",main),0,0);
-  grid->addWidget(new QLabel("Two",main),1,0);
-  grid->addWidget(new QLabel("Three",main)2,0);*/
-
+  //set Apparant Background
+ /* label_battery->setAttribute(Qt::WA_TranslucentBackground,true);
+  label_temperature->setAttribute(Qt::WA_TranslucentBackground,true);
+  label_speed->setAttribute(Qt::WA_TranslucentBackground,true);*/
 }
 
 void RenderPanel::sendMouseMoveEvent()

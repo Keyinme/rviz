@@ -33,6 +33,7 @@
 #include <OgreRenderWindow.h>
 
 #include <QtGlobal>
+#include <QLabel>
 #include <QApplication>
 #include <QMoveEvent>
 #include <QPaintEvent>
@@ -61,11 +62,14 @@ RenderWidget::RenderWidget( RenderSystem* render_system, QWidget *parent )
   // widget.  The frame graphics are completely covered up by the 3D
   // render, so using it does not affect the appearance at all.
   this->renderFrame = new QFrame;
-  this->renderFrame->setLineWidth(1);
+  this->renderFrame->setLineWidth(10);
   this->renderFrame->setFrameShadow(QFrame::Sunken);
   this->renderFrame->setFrameShape(QFrame::Box);
   this->renderFrame->show();
-
+/*  QLabel* label=new QLabel(this)
+  QLabel* label2=new QLabel(this)
+  label -> setText("Battery: 100%");
+  label2 -> setText("Battery2: 100%");*/
   QVBoxLayout *mainLayout = new QVBoxLayout;
   mainLayout->setContentsMargins( 0, 0, 0, 0 );
   mainLayout->addWidget(this->renderFrame);
