@@ -269,7 +269,12 @@ void VisualizationFrame::initialize(const QString& display_config_file )
   if( !ros::isInitialized() )
   {
     int argc = 0;
+//    RenderPanel renderpanel_ss;
     ros::init( argc, 0, "rviz", ros::init_options::AnonymousName );
+//    ros::NodeHandle status_nh;
+//    ros::Subscriber status_sub;
+//    status_sub = status_nh.subscribe("status", 1000, RenderPanel::statusCallback);
+//    ros::spin();
   }
 
   // Periodically process events for the splash screen.

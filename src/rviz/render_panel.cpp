@@ -45,6 +45,7 @@
 #include "rviz/window_manager_interface.h"
 
 #include "rviz/render_panel.h"
+#include "rviz/view_manager.h"
 #include "ros/ros.h"
 #include "std_msgs/Int16.h"
 
@@ -63,6 +64,13 @@ RenderPanel::RenderPanel( QWidget* parent )
   , context_menu_visible_(false)
 {
   setFocus( Qt::OtherFocusReason );
+
+  //add keyinme 2016-06-10
+  //status_topic_property_ = new RosTopicProperty( "status", "status",
+    //                                             QString::fromStdString( ros::message_traits::datatype<std_msgs::Int16>() ),
+      //                                           "std_msgs::Int16 topic to subscribe to.  <topic>_array will also"
+        //                                         " automatically be subscribed with type visualization_msgs::MarkerArray.",
+          //                                       this, SLOT( updateTopic() ));
 }
 
 RenderPanel::~RenderPanel()
@@ -98,10 +106,13 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
   fake_mouse_move_event_timer_->start( 33 /*milliseconds*/ );
   
   //add keyinme 2017-06-07-10
-  ros::NodeHandle status_nh;
+//  ros::init(agrc, agrv, "xbot_status6");
+/*  ros::NodeHandle status_nh;
   ros::Subscriber status_sub;
-  status_sub = status_nh.subscribe("status", 1000, &RenderPanel::statusCallback);
-  ros::spin();
+  status_sub = status_nh.subscribe("status", 1000, statusCallback);
+  ros::spin();*/
+  //Error: no matching function for call to ‘ros::NodeHandle::subscribe(const char [7], int, void (rviz::RenderPanel::*)(const ConstPtr&, const ConstPtr&, const ConstPtr&))’ status_sub = status_nh.subscribe("status", 1000, &RenderPanel::statusCallback);
+
 
   // add keyinme 2017-06-06
 /*  int bat_val = 18;
@@ -138,7 +149,7 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
 }
 
 
-void RenderPanel::statusCallback(const std_msgs::Int16::ConstPtr& bat,const std_msgs::Int16::ConstPtr& tem, const std_msgs::Int16::ConstPtr& spe)
+/*void RenderPanel::statusCallback(const std_msgs::Int16::ConstPtr& bat,const std_msgs::Int16::ConstPtr& tem, const std_msgs::Int16::ConstPtr& spe)
 {
   ROS_INFO("I heard: [%d]", bat->data);
   ROS_INFO("I heard: [%d]", tem->data);
@@ -183,6 +194,57 @@ void RenderPanel::statusCallback(const std_msgs::Int16::ConstPtr& bat,const std_
   label_speed -> setPalette(pe);*/
 
 }
+
+//add keyinme 2017-06-10
+/*void RenderPanel::onEnable()
+{
+  subscribe();
+}
+
+void RenderPanel::onDisable()
+{
+  unsubscribe();
+  //clear();
+}
+
+void RenderPanel::subscribe()
+{
+  std::string status_topic = status_topic_property_->getTopicStd();
+  if( !status_topic.empty() )
+  {
+    status_sub_.shutdown();
+
+    try
+    {
+  
+      status_sub_ = update_nh_.subscribe( status_topic, 1000, &RenderPanel::incomingStatud, this );
+      //setStatus( StatusProperty::Ok, "Topic", "OK" );
+    }
+    catch( ros::Exception& e )
+    {
+      ROS_INFO("topic error"); //setStatus( StatusProperty::Error, "Topic", QString("Error subscribing: ") + e.what() );
+    }
+  }
+}
+
+void RenderPanel::unsubscribe()
+{
+  status_sub_.shutdown();
+  status_sub_.unsubscribe();
+}
+
+void RenderPanel::updateTopic()
+{
+  unsubscribe();
+  subscribe();
+  //clear();
+}
+
+void RenderPanel::incomingStatus(const std_msgs::Int16::ConstPtr& status_info)
+{
+  current_status = *status_info;
+  ROS_INFO("current_status: [%d]", current_status->data);
+}*/
 
 void RenderPanel::sendMouseMoveEvent()
 {

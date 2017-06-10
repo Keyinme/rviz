@@ -41,6 +41,8 @@
 #include <message_filters/subscriber.h>
 
 #include <boost/thread/mutex.hpp>
+#include <properties/bool_property.h>
+
 #endif
 
 #include <vector>
@@ -98,7 +100,6 @@ public:
    * position for this view. */
   void setViewController( ViewController* controller );
   
-  void statusCallback(const std_msgs::Int16::ConstPtr& bat,const std_msgs::Int16::ConstPtr& tem, const std_msgs::Int16::ConstPtr& spe);
   /** Show the given menu as a context menu, positioned based on the
    * current mouse position.  This can be called from any thread. */
   void showContextMenu( boost::shared_ptr<QMenu> menu );
@@ -107,6 +108,8 @@ public:
   bool contextMenuVisible();
 
   virtual void sceneManagerDestroyed( Ogre::SceneManager* source );
+
+  void statusCallback(const std_msgs::Int16::ConstPtr& bat,const std_msgs::Int16::ConstPtr& tem, const std_msgs::Int16::ConstPtr& spe);
 
 protected:
   // Override from QWidget
@@ -128,6 +131,21 @@ protected:
   virtual void wheelEvent( QWheelEvent* event );
 
   virtual void keyPressEvent( QKeyEvent* event );
+
+  //add keyinme 2017-06-10
+  virtual void onEnable();
+  virtual void onDisable();
+
+  virtual void subscribe();
+  virtual void unsubscribe();
+  virtual void Updatetopic();
+
+  void incomingStatus(const std_msgs::Int16::ConstPtr& status_info);
+
+  ros::Subscriber status_sub_;
+
+  RosTopicProperty* status_topic_property_;
+
 
   // Mouse handling
   int mouse_x_;                                           ///< X position of the last mouse event
@@ -162,6 +180,7 @@ private:
   QLabel* label_battery;
   QLabel* label_temperature;
   QLabel* label_speed;
+
 
 };
 
