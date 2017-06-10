@@ -41,7 +41,6 @@
 #include <message_filters/subscriber.h>
 
 #include <boost/thread/mutex.hpp>
-#include <properties/bool_property.h>
 
 #endif
 

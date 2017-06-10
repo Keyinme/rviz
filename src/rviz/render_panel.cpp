@@ -30,24 +30,21 @@
 #include <QApplication>
 #include <QMenu>
 #include <QTimer>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QLayout>
 
 #include <OgreSceneManager.h>
 #include <OgreCamera.h>
-
 
 #include "rviz/display.h"
 #include "rviz/view_controller.h"
 #include "rviz/viewport_mouse_event.h"
 #include "rviz/visualization_manager.h"
 #include "rviz/window_manager_interface.h"
+#include "rviz/properties/ros_topic_property.h"
+#include "rviz/properties/int_property.h"
+
+#include "std_msgs/Int16.h"
 
 #include "rviz/render_panel.h"
-#include "rviz/view_manager.h"
-#include "ros/ros.h"
-#include "std_msgs/Int16.h"
 
 namespace rviz
 {
@@ -65,12 +62,18 @@ RenderPanel::RenderPanel( QWidget* parent )
 {
   setFocus( Qt::OtherFocusReason );
 
-  //add keyinme 2016-06-10
-  //status_topic_property_ = new RosTopicProperty( "status", "status",
-    //                                             QString::fromStdString( ros::message_traits::datatype<std_msgs::Int16>() ),
-      //                                           "std_msgs::Int16 topic to subscribe to.  <topic>_array will also"
-        //                                         " automatically be subscribed with type visualization_msgs::MarkerArray.",
-          //                                       this, SLOT( updateTopic() ));
+  //add keyinme 2017-06-10
+  status_topic_property_ = new RosTopicProperty( "status", "status",
+                                                 QString::fromStdString( ros::message_traits::datatype<std_msgs::Int16>() ),
+                                                 "visualization_msgs::Marker topic to subscribe to.  <topic>_array will also"
+                                                 " automatically be subscribed with type visualization_msgs::MarkerArray.",
+                                                 this, SLOT( updateTopic() ));
+  queue_size_property_ = new IntProperty( "Queue Size", 100,
+                                          "Advanced: set the size of the incoming Marker message queue.  Increasing this is"
+                                          " useful if your incoming TF data is delayed significantly from your Marker data, "
+                                          "but it can greatly increase memory usage if the messages are big.",
+                                          this, SLOT( updateQueueSize() ));
+  queue_size_property_->setMin( 0 );
 }
 
 RenderPanel::~RenderPanel()
@@ -104,7 +107,7 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
 
   connect( fake_mouse_move_event_timer_, SIGNAL( timeout() ), this, SLOT( sendMouseMoveEvent() ));
   fake_mouse_move_event_timer_->start( 33 /*milliseconds*/ );
-  
+
   //add keyinme 2017-06-07-10
 //  ros::init(agrc, agrv, "xbot_status6");
 /*  ros::NodeHandle status_nh;
@@ -146,105 +149,8 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
  /* label_battery->setAttribute(Qt::WA_TranslucentBackground,true);
   label_temperature->setAttribute(Qt::WA_TranslucentBackground,true);
   label_speed->setAttribute(Qt::WA_TranslucentBackground,true);*/
-}
-
-
-/*void RenderPanel::statusCallback(const std_msgs::Int16::ConstPtr& bat,const std_msgs::Int16::ConstPtr& tem, const std_msgs::Int16::ConstPtr& spe)
-{
-  ROS_INFO("I heard: [%d]", bat->data);
-  ROS_INFO("I heard: [%d]", tem->data);
-  ROS_INFO("I heard: [%d]", spe->data);
-
-  /*std::stringstream bat_ss;
-  std::string bat_str;
-  sss<<bat;
-  sss>>bat_str
-
-  std::stringstream tem_ss;
-  std::string tem_str;
-  sss<<tem;
-  sss>>tem_str
-
-  std::stringstream spe_ss;
-  std::string spe_str;
-  sss<<spe;
-  sss>>spe_str*/
-
-  /*QString battery = "Battery: " + bat->data + "%";
-  QString temperature = "Temperature: " + tem->data + "oC";
-  QString speed = "Speed: " + spe->data + "m/s";
-
-  label_battery = new QLabel(this);
-  label_battery -> setText(battery);
-  label_temperature = new QLabel(this);
-  label_temperature -> setText(temperature);
-  label_speed = new QLabel(this);
-  label_speed -> setText(speed);
-
-  label_battery -> setGeometry(0,0,100,15);
-  label_temperature -> setGeometry(0,20,120,15);
-  label_speed -> setGeometry(0,40,100,15);
-
-  //set Font color
-  QPalette pe;
-  pe.setColor(QPalette::WindowText,Qt::white);
-  pe.setColor(QPalette::Window,Qt::gray);
-  label_battery -> setPalette(pe);
-  label_temperature -> setPalette(pe);
-  label_speed -> setPalette(pe);*/
 
 }
-
-//add keyinme 2017-06-10
-/*void RenderPanel::onEnable()
-{
-  subscribe();
-}
-
-void RenderPanel::onDisable()
-{
-  unsubscribe();
-  //clear();
-}
-
-void RenderPanel::subscribe()
-{
-  std::string status_topic = status_topic_property_->getTopicStd();
-  if( !status_topic.empty() )
-  {
-    status_sub_.shutdown();
-
-    try
-    {
-  
-      status_sub_ = update_nh_.subscribe( status_topic, 1000, &RenderPanel::incomingStatud, this );
-      //setStatus( StatusProperty::Ok, "Topic", "OK" );
-    }
-    catch( ros::Exception& e )
-    {
-      ROS_INFO("topic error"); //setStatus( StatusProperty::Error, "Topic", QString("Error subscribing: ") + e.what() );
-    }
-  }
-}
-
-void RenderPanel::unsubscribe()
-{
-  status_sub_.shutdown();
-  status_sub_.unsubscribe();
-}
-
-void RenderPanel::updateTopic()
-{
-  unsubscribe();
-  subscribe();
-  //clear();
-}
-
-void RenderPanel::incomingStatus(const std_msgs::Int16::ConstPtr& status_info)
-{
-  current_status = *status_info;
-  ROS_INFO("current_status: [%d]", current_status->data);
-}*/
 
 void RenderPanel::sendMouseMoveEvent()
 {
@@ -386,6 +292,57 @@ void RenderPanel::sceneManagerDestroyed( Ogre::SceneManager* destroyed_scene_man
     default_camera_ = NULL;
     setCamera( NULL );
   }
+}
+
+void RenderPanel::incomingStatus(const std_msgs::Int16::ConstPtr& status_info)
+{
+    const std::string current_status = *status_info;
+    ROS_INFO("current_status: %s", current_status);
+    
+}
+
+void RenderPanel::onEnable()
+{
+  subscribe();
+}
+
+void RenderPanel::onDisable()
+{
+  unsubscribe();
+  tf_filter_->clear();
+
+  clearMarkers();
+}
+
+void RenderPanel::updateTopic()
+{
+  unsubscribe();
+  subscribe();
+}
+
+void RenderPanel::subscribe()
+{
+
+  std::string status = status_topic_property_->getTopicStd();
+  if( !marker_topic.empty() )
+  {
+    status_sub.shutdown();
+
+    try
+    {
+      status_sub = update_nh_.subscribe( status, queue_size_property_->getInt(), &MarkerDisplay::incomingMarkerArray, this );
+      //setStatus( StatusProperty::Ok, "Topic", "OK" );
+    }
+    catch( ros::Exception& e )
+    {
+      ROS_INFO("subscribing Error"); //setStatus( StatusProperty::Error, "Topic", QString("Error subscribing: ") + e.what() );
+    }
+  }
+}
+
+void RenderPanel::unsubscribe()
+{
+  status_sub.unsubscribe();
 }
 
 } // namespace rviz
