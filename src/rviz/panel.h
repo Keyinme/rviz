@@ -32,6 +32,7 @@
 #include <QWidget>
 
 #include "rviz/config.h"
+# include <ros/ros.h>
 
 namespace rviz
 {
@@ -87,6 +88,7 @@ Q_SIGNALS:
    * This is used to let the system know that changes have been made
    * since the last time the config was saved. */
   void configChanged();
+
 
 protected:
   VisualizationManager* vis_manager_;

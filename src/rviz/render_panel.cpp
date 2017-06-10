@@ -45,6 +45,8 @@
 #include "rviz/window_manager_interface.h"
 
 #include "rviz/render_panel.h"
+#include "ros/ros.h"
+#include "std_msgs/Int16.h"
 
 namespace rviz
 {
@@ -95,14 +97,20 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
   connect( fake_mouse_move_event_timer_, SIGNAL( timeout() ), this, SLOT( sendMouseMoveEvent() ));
   fake_mouse_move_event_timer_->start( 33 /*milliseconds*/ );
   
-  // add keyinme 2017-06-06
-  QString bat_val = "18%";
-  QString temp_val = "37";
-  QString speed_val = "1m/s";
+  //add keyinme 2017-06-07-10
+  ros::NodeHandle status_nh;
+  ros::Subscriber status_sub;
+  status_sub = status_nh.subscribe("status", 1000, &RenderPanel::statusCallback);
+  ros::spin();
 
-  QString battery = "Battery: " + bat_val;
-  QString temperature = "Temperature: " + temp_val;
-  QString speed = "Speed: " + speed_val;
+  // add keyinme 2017-06-06
+/*  int bat_val = 18;
+  int temp_val = 37;
+  int speed_val = 1;
+
+  QString battery = "Battery: " + bat_val + "%";
+  QString temperature = "Temperature: " + temp_val + "oC";
+  QString speed = "Speed: " + speed_val + "m/s";
 
   label_battery = new QLabel(this);
   label_battery -> setText(battery);
@@ -121,12 +129,59 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
   pe.setColor(QPalette::Window,Qt::gray);
   label_battery -> setPalette(pe);
   label_temperature -> setPalette(pe);
-  label_speed -> setPalette(pe);
+  label_speed -> setPalette(pe);*/
 
   //set Apparant Background
  /* label_battery->setAttribute(Qt::WA_TranslucentBackground,true);
   label_temperature->setAttribute(Qt::WA_TranslucentBackground,true);
   label_speed->setAttribute(Qt::WA_TranslucentBackground,true);*/
+}
+
+
+void RenderPanel::statusCallback(const std_msgs::Int16::ConstPtr& bat,const std_msgs::Int16::ConstPtr& tem, const std_msgs::Int16::ConstPtr& spe)
+{
+  ROS_INFO("I heard: [%d]", bat->data);
+  ROS_INFO("I heard: [%d]", tem->data);
+  ROS_INFO("I heard: [%d]", spe->data);
+
+  /*std::stringstream bat_ss;
+  std::string bat_str;
+  sss<<bat;
+  sss>>bat_str
+
+  std::stringstream tem_ss;
+  std::string tem_str;
+  sss<<tem;
+  sss>>tem_str
+
+  std::stringstream spe_ss;
+  std::string spe_str;
+  sss<<spe;
+  sss>>spe_str*/
+
+  /*QString battery = "Battery: " + bat->data + "%";
+  QString temperature = "Temperature: " + tem->data + "oC";
+  QString speed = "Speed: " + spe->data + "m/s";
+
+  label_battery = new QLabel(this);
+  label_battery -> setText(battery);
+  label_temperature = new QLabel(this);
+  label_temperature -> setText(temperature);
+  label_speed = new QLabel(this);
+  label_speed -> setText(speed);
+
+  label_battery -> setGeometry(0,0,100,15);
+  label_temperature -> setGeometry(0,20,120,15);
+  label_speed -> setGeometry(0,40,100,15);
+
+  //set Font color
+  QPalette pe;
+  pe.setColor(QPalette::WindowText,Qt::white);
+  pe.setColor(QPalette::Window,Qt::gray);
+  label_battery -> setPalette(pe);
+  label_temperature -> setPalette(pe);
+  label_speed -> setPalette(pe);*/
+
 }
 
 void RenderPanel::sendMouseMoveEvent()

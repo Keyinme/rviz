@@ -35,6 +35,10 @@
 #ifndef Q_MOC_RUN
 #include <OgreSceneManager.h>
 #include <qlayout.h>
+#include "ros/ros.h"
+#include "std_msgs/Int16.h"
+# include "rviz/properties/ros_topic_property.h"
+#include <message_filters/subscriber.h>
 
 #include <boost/thread/mutex.hpp>
 #endif
@@ -93,7 +97,8 @@ public:
   /** @brief Set the ViewController which should control the camera
    * position for this view. */
   void setViewController( ViewController* controller );
-
+  
+  void statusCallback(const std_msgs::Int16::ConstPtr& bat,const std_msgs::Int16::ConstPtr& tem, const std_msgs::Int16::ConstPtr& spe);
   /** Show the given menu as a context menu, positioned based on the
    * current mouse position.  This can be called from any thread. */
   void showContextMenu( boost::shared_ptr<QMenu> menu );
@@ -142,6 +147,10 @@ protected:
   // if this does not belong to a Display.
   Display* display_;
 
+  
+  
+
+
 private Q_SLOTS:
   void sendMouseMoveEvent();
   void onContextMenuHide();
@@ -153,6 +162,7 @@ private:
   QLabel* label_battery;
   QLabel* label_temperature;
   QLabel* label_speed;
+
 };
 
 } // namespace rviz
