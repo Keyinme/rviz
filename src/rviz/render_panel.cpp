@@ -61,11 +61,13 @@ RenderPanel::RenderPanel( QWidget* parent )
   , context_menu_visible_(false)
 {
     setFocus( Qt::OtherFocusReason );
-  label_battery -> setGeometry(0,0,100,15);
-  QPalette pe;
-  pe.setColor(QPalette::WindowText,Qt::white);
-  pe.setColor(QPalette::Window,Qt::gray);
-  label_battery -> setPalette(pe);
+
+    //add keyinme 2017-06-11    
+    label_battery -> setGeometry(0,0,100,15);
+    QPalette pe;
+    pe.setColor(QPalette::WindowText,Qt::white);
+    pe.setColor(QPalette::Window,Qt::gray);
+    label_battery -> setPalette(pe);
   //add keyinme 2017-06-10
 /*  status_topic_property_ = new RosTopicProperty( "status", "status",
                                                  QString::fromStdString( ros::message_traits::datatype<std_msgs::Int16>() ),
@@ -112,13 +114,8 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
   connect( fake_mouse_move_event_timer_, SIGNAL( timeout() ), this, SLOT( sendMouseMoveEvent() ));
   fake_mouse_move_event_timer_->start( 33 /*milliseconds*/ );
 
-
-
+  //add keyinme 2017-06-11
   subscribe();
-
-  
-  
-
 
   //add keyinme 2017-06-07-10
 //  ros::init(agrc, agrv, "xbot_status6");
@@ -311,14 +308,10 @@ void RenderPanel::incomingStatus(const std_msgs::Int16::ConstPtr& status_info)
   //const std_msgs::Int16& current_status = *status_info;
   QString bat;
   bat="Battery: " + QString::number(status_info->data) + "%";
-  //ROS_INFO("current_status: %s", bat);
-
   //static int k = 0;
-      
   //ROS_INFO("k:%d",k++);
   //label_battery -> clear();
   label_battery -> setText(bat);
-
   //label_battery -> show();
 
   //connect( label_timer, SIGNAL( timeout() ), this, SLOT( labelUpdate() ));
