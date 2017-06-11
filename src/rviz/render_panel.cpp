@@ -60,10 +60,14 @@ RenderPanel::RenderPanel( QWidget* parent )
   , default_camera_(0)
   , context_menu_visible_(false)
 {
-  setFocus( Qt::OtherFocusReason );
-
+    setFocus( Qt::OtherFocusReason );
+  label_battery -> setGeometry(0,0,100,15);
+  QPalette pe;
+  pe.setColor(QPalette::WindowText,Qt::white);
+  pe.setColor(QPalette::Window,Qt::gray);
+  label_battery -> setPalette(pe);
   //add keyinme 2017-06-10
-  status_topic_property_ = new RosTopicProperty( "status", "status",
+/*  status_topic_property_ = new RosTopicProperty( "status", "status",
                                                  QString::fromStdString( ros::message_traits::datatype<std_msgs::Int16>() ),
                                                  "visualization_msgs::Marker topic to subscribe to.  <topic>_array will also"
                                                  " automatically be subscribed with type visualization_msgs::MarkerArray.",
@@ -73,7 +77,7 @@ RenderPanel::RenderPanel( QWidget* parent )
                                           " useful if your incoming TF data is delayed significantly from your Marker data, "
                                           "but it can greatly increase memory usage if the messages are big.",
                                           this, SLOT( updateQueueSize() ));
-  queue_size_property_->setMin( 0 );
+  queue_size_property_->setMin( 0 );*/
 }
 
 RenderPanel::~RenderPanel()
@@ -107,6 +111,14 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
 
   connect( fake_mouse_move_event_timer_, SIGNAL( timeout() ), this, SLOT( sendMouseMoveEvent() ));
   fake_mouse_move_event_timer_->start( 33 /*milliseconds*/ );
+
+
+
+  subscribe();
+
+  
+  
+
 
   //add keyinme 2017-06-07-10
 //  ros::init(agrc, agrv, "xbot_status6");
@@ -296,12 +308,53 @@ void RenderPanel::sceneManagerDestroyed( Ogre::SceneManager* destroyed_scene_man
 
 void RenderPanel::incomingStatus(const std_msgs::Int16::ConstPtr& status_info)
 {
-    const std::string current_status = *status_info;
-    ROS_INFO("current_status: %s", current_status);
+  //const std_msgs::Int16& current_status = *status_info;
+  QString bat;
+  bat="Battery: " + QString::number(status_info->data) + "%";
+  //ROS_INFO("current_status: %s", bat);
+
+  //static int k = 0;
+      
+  //ROS_INFO("k:%d",k++);
+  //label_battery -> clear();
+  label_battery -> setText(bat);
+
+  //label_battery -> show();
+
+  //connect( label_timer, SIGNAL( timeout() ), this, SLOT( labelUpdate() ));
+  //label_timer->start( 33 /*milliseconds*/ );
+  
+  //label_battery -> update();
+  //ROS_INFO("good subscribe");
+  
+  /*label_temperature = new QLabel(this);
+  label_temperature -> setText(temperature);
+  label_speed = new QLabel(this);
+  label_speed -> setText(speed);*/
+
+  //label_battery -> setGeometry(0,0,100,15);
+  //label_temperature -> setGeometry(0,20,120,15);
+  //label_speed -> setGeometry(0,40,100,15);
+
+  //set Font color
+  //QPalette pe;
+  //pe.setColor(QPalette::WindowText,Qt::white);
+  //pe.setColor(QPalette::Window,Qt::gray);
+  //label_battery -> setPalette(pe);
+  //label_temperature -> setPalette(pe);
+  //label_speed -> setPalette(pe);
+
+
     
 }
 
-void RenderPanel::onEnable()
+void RenderPanel::labelUpdate()
+{
+  //label_battery -> setText(strin);const QString& strin
+  //ROS_INFO("labelUpdate");
+}
+
+/*void RenderPanel::onEnable()
 {
   subscribe();
 }
@@ -309,40 +362,37 @@ void RenderPanel::onEnable()
 void RenderPanel::onDisable()
 {
   unsubscribe();
-  tf_filter_->clear();
-
-  clearMarkers();
 }
 
 void RenderPanel::updateTopic()
 {
   unsubscribe();
   subscribe();
-}
+}*/
 
 void RenderPanel::subscribe()
 {
 
-  std::string status = status_topic_property_->getTopicStd();
-  if( !marker_topic.empty() )
-  {
+  std::string status = "status";//status_topic_property_->getTopicStd();
+  //if( !marker_topic.empty() )
+  //{
     status_sub.shutdown();
 
     try
     {
-      status_sub = update_nh_.subscribe( status, queue_size_property_->getInt(), &MarkerDisplay::incomingMarkerArray, this );
+      status_sub = update_nh.subscribe( status, 1000, &RenderPanel::incomingStatus, this );
       //setStatus( StatusProperty::Ok, "Topic", "OK" );
     }
     catch( ros::Exception& e )
     {
       ROS_INFO("subscribing Error"); //setStatus( StatusProperty::Error, "Topic", QString("Error subscribing: ") + e.what() );
     }
-  }
+  //}
 }
 
 void RenderPanel::unsubscribe()
 {
-  status_sub.unsubscribe();
+  status_sub.shutdown();
 }
 
 } // namespace rviz

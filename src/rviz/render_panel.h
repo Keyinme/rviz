@@ -131,21 +131,6 @@ protected:
 
   virtual void keyPressEvent( QKeyEvent* event );
 
-  //add keyinme 2017-06-10
-  virtual void onEnable();
-  virtual void onDisable();
-
-  virtual void subscribe();
-  virtual void unsubscribe();
-  virtual void Updatetopic();
-
-  void incomingStatus(const std_msgs::Int16::ConstPtr& status_info);
-
-  ros::Subscriber status_sub_;
-
-  RosTopicProperty* status_topic_property_;
-
-
   // Mouse handling
   int mouse_x_;                                           ///< X position of the last mouse event
   int mouse_y_;                                           ///< Y position of the last mouse event
@@ -164,22 +149,35 @@ protected:
   // if this does not belong to a Display.
   Display* display_;
 
+  //add keyinme 2017-06-10-11
+  //virtual void onEnable();
+  //virtual void onDisable();
+
+  virtual void subscribe();
+  virtual void unsubscribe();
+  //virtual void updateTopic();
   
-  
+
+  void incomingStatus(const std_msgs::Int16::ConstPtr& status_info);
+
+  ros::NodeHandle update_nh;
+  ros::Subscriber status_sub;  
 
 
 private Q_SLOTS:
   void sendMouseMoveEvent();
   void onContextMenuHide();
+  void labelUpdate();//const QString& strin
 
 private:
   QTimer* fake_mouse_move_event_timer_;
   Ogre::Camera* default_camera_; ///< A default camera created in initialize().
   // add keyinme 2017-06-01
-  QLabel* label_battery;
+  QLabel* label_battery = new QLabel(this);
   QLabel* label_temperature;
   QLabel* label_speed;
 
+  QTimer* label_timer;
 
 };
 
