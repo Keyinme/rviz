@@ -48,6 +48,7 @@
 #include <map>
 #include <QLabel>
 #include <QPalette>
+#include <QTime>
 
 namespace Ogre
 {
@@ -173,9 +174,9 @@ private:
   QTimer* fake_mouse_move_event_timer_;
   Ogre::Camera* default_camera_; ///< A default camera created in initialize().
   // add keyinme 2017-06-01
-  QLabel* label_battery = new QLabel(this);
-  QLabel* label_temperature;
-  QLabel* label_speed;
+  QLabel* label_battery = new QLabel(tr("Battery:100%"),this);
+  QLabel* label_temperature = new QLabel(tr("Temperature:100oC"),this);
+  QLabel* label_speed = new QLabel(tr("Speed:1m/s"),this);
 
   QTimer* label_timer;
 

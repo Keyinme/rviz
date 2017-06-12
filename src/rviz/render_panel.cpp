@@ -63,11 +63,31 @@ RenderPanel::RenderPanel( QWidget* parent )
     setFocus( Qt::OtherFocusReason );
 
     //add keyinme 2017-06-11    
-    label_battery -> setGeometry(0,0,100,15);
+    //set shape
+    //setGeometry(pos x, pos y, length, height)
+    /*label_battery -> setGeometry(0,0,100,15);
+    label_temperature -> setGeometry(0,20,120,15);
+    label_speed -> setGeometry(0,40,100,15);*/
+    label_battery -> move(0,0);
+    label_temperature -> move(0,20);
+    label_speed -> move(0,40);
+    label_battery -> adjustSize();
+    label_temperature -> adjustSize();
+    label_speed -> adjustSize();
+    /*label_battery -> setWordWrap(true);
+    label_temperature -> setWordWrap(true);
+    label_speed -> setWordWrap(true);*/
+
+    //set Font color
     QPalette pe;
     pe.setColor(QPalette::WindowText,Qt::white);
-    pe.setColor(QPalette::Window,Qt::gray);
+    //pe.setColor(QPalette::Window,Qt::gray);
     label_battery -> setPalette(pe);
+    label_temperature -> setPalette(pe);
+    label_speed -> setPalette(pe);
+
+    label_timer = new QTimer(this);
+    label_timer -> setInterval(1);  //ms
   //add keyinme 2017-06-10
 /*  status_topic_property_ = new RosTopicProperty( "status", "status",
                                                  QString::fromStdString( ros::message_traits::datatype<std_msgs::Int16>() ),
@@ -310,41 +330,27 @@ void RenderPanel::incomingStatus(const std_msgs::Int16::ConstPtr& status_info)
   bat="Battery: " + QString::number(status_info->data) + "%";
   //static int k = 0;
   //ROS_INFO("k:%d",k++);
-  //label_battery -> clear();
-  label_battery -> setText(bat);
   //label_battery -> show();
-
-  //connect( label_timer, SIGNAL( timeout() ), this, SLOT( labelUpdate() ));
-  //label_timer->start( 33 /*milliseconds*/ );
-  
+  label_battery -> setText(bat);
+  //label_battery -> blockSignals(true);
+  //label_battery -> hide();
+  //label_battery -> blockSignals(false);
+  //label_battery -> show();
   //label_battery -> update();
-  //ROS_INFO("good subscribe");
+
+  //label_timer->start();
+  //connect( label_timer, SIGNAL( timeout() ), this, SLOT( labelUpdate() ));
   
-  /*label_temperature = new QLabel(this);
-  label_temperature -> setText(temperature);
-  label_speed = new QLabel(this);
-  label_speed -> setText(speed);*/
-
-  //label_battery -> setGeometry(0,0,100,15);
-  //label_temperature -> setGeometry(0,20,120,15);
-  //label_speed -> setGeometry(0,40,100,15);
-
-  //set Font color
-  //QPalette pe;
-  //pe.setColor(QPalette::WindowText,Qt::white);
-  //pe.setColor(QPalette::Window,Qt::gray);
-  //label_battery -> setPalette(pe);
-  //label_temperature -> setPalette(pe);
-  //label_speed -> setPalette(pe);
-
-
-    
+  //ROS_INFO("good subscribe");    
 }
 
 void RenderPanel::labelUpdate()
 {
   //label_battery -> setText(strin);const QString& strin
-  //ROS_INFO("labelUpdate");
+  label_timer->stop();
+  label_battery -> setText(tr("labelUpdate"));
+  label_battery -> show();
+  ROS_INFO("labelUpdate");
 }
 
 /*void RenderPanel::onEnable()
