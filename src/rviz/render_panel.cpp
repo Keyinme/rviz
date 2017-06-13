@@ -69,8 +69,8 @@ RenderPanel::RenderPanel( QWidget* parent )
     label_temperature -> setGeometry(0,20,120,15);
     label_speed -> setGeometry(0,40,100,15);*/
     label_battery -> move(0,0);
-    label_temperature -> move(0,20);
-    label_speed -> move(0,40);
+    label_temperature -> move(0,25);
+    label_speed -> move(0,50);
     label_battery -> adjustSize();
     label_temperature -> adjustSize();
     label_speed -> adjustSize();
@@ -79,12 +79,13 @@ RenderPanel::RenderPanel( QWidget* parent )
     label_speed -> setWordWrap(true);*/
 
     //set Font color
-    QPalette pe;
-    pe.setColor(QPalette::WindowText,Qt::white);
+    label_battery -> setStyleSheet("QLineEdit{color:white;border:0px;background:rgba(0,0,0,127)}");
+    //QPalette pe;
+    //pe.setColor(QPalette::WindowText,Qt::white);
     //pe.setColor(QPalette::Window,Qt::gray);
-    label_battery -> setPalette(pe);
-    label_temperature -> setPalette(pe);
-    label_speed -> setPalette(pe);
+    //label_battery -> setPalette(pe);
+    //label_temperature -> setPalette(pe);
+    //label_speed -> setPalette(pe);
 
     label_timer = new QTimer(this);
     label_timer -> setInterval(1);  //ms
