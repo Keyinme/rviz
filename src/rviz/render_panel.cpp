@@ -79,7 +79,9 @@ RenderPanel::RenderPanel( QWidget* parent )
     label_speed -> setWordWrap(true);*/
 
     //set Font color
-    label_battery -> setStyleSheet("QLineEdit{color:white;border:0px;background:rgba(0,0,0,127)}");
+    label_battery -> setStyleSheet("QLineEdit{color:white;border:0px;background:rgba(0,0,0,127)}");  
+    label_temperature -> setStyleSheet("QLineEdit{color:white;border:0px;background:rgba(0,0,0,127)}");
+    label_speed -> setStyleSheet("QLineEdit{color:white;border:0px;background:rgba(0,0,0,127)}");
     //QPalette pe;
     //pe.setColor(QPalette::WindowText,Qt::white);
     //pe.setColor(QPalette::Window,Qt::gray);
@@ -87,8 +89,8 @@ RenderPanel::RenderPanel( QWidget* parent )
     //label_temperature -> setPalette(pe);
     //label_speed -> setPalette(pe);
 
-    label_timer = new QTimer(this);
-    label_timer -> setInterval(1);  //ms
+    //label_timer = new QTimer(this);
+    //label_timer -> setInterval(1);  //ms
   //add keyinme 2017-06-10
 /*  status_topic_property_ = new RosTopicProperty( "status", "status",
                                                  QString::fromStdString( ros::message_traits::datatype<std_msgs::Int16>() ),
@@ -327,12 +329,16 @@ void RenderPanel::sceneManagerDestroyed( Ogre::SceneManager* destroyed_scene_man
 void RenderPanel::incomingStatus(const std_msgs::Int16::ConstPtr& status_info)
 {
   //const std_msgs::Int16& current_status = *status_info;
-  QString bat;
+  QString bat,tem,spe;
   bat="Battery: " + QString::number(status_info->data) + "%";
+  tem="Temperature: " + QString::number(status_info->data) + "C";
+  spe="Speed: " + QString::number(status_info->data) + "m/s";
   //static int k = 0;
   //ROS_INFO("k:%d",k++);
   //label_battery -> show();
   label_battery -> setText(bat);
+  label_temperature -> setText(tem);
+  label_speed -> setText(spe);
   //label_battery -> blockSignals(true);
   //label_battery -> hide();
   //label_battery -> blockSignals(false);
