@@ -34,6 +34,9 @@
 
 #ifndef Q_MOC_RUN
 #include <OgreSceneManager.h>
+#include <QLineEdit>
+#include "std_msgs/Int16.h"
+#include "ros/ros.h"
 
 #include <boost/thread/mutex.hpp>
 #endif
@@ -139,6 +142,14 @@ protected:
   // if this does not belong to a Display.
   Display* display_;
 
+  //add keyinme 20170620
+  virtual void incomingStatus(const std_msgs::Int16::ConstPtr& status_info);
+  virtual void subscribe();
+  virtual void unsubscribe();
+
+  ros::NodeHandle update_nh;
+  ros::Subscriber status_sub;
+
 private Q_SLOTS:
   void sendMouseMoveEvent();
   void onContextMenuHide();
@@ -146,6 +157,11 @@ private Q_SLOTS:
 private:
   QTimer* fake_mouse_move_event_timer_;
   Ogre::Camera* default_camera_; ///< A default camera created in initialize().
+
+  //add keyinme 20170620
+  QLineEdit* label_battery = new QLineEdit(tr("Battery:100%"),this);
+  QLineEdit* label_temperature = new QLineEdit(tr("Temperature:100oC"),this);
+  QLineEdit* label_speed = new QLineEdit(tr("Speed:1m/s"),this);
 };
 
 } // namespace rviz

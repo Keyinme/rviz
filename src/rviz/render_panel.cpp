@@ -30,15 +30,19 @@
 #include <QApplication>
 #include <QMenu>
 #include <QTimer>
+#include <QLineEdit>
 
 #include <OgreSceneManager.h>
 #include <OgreCamera.h>
+
 
 #include "rviz/display.h"
 #include "rviz/view_controller.h"
 #include "rviz/viewport_mouse_event.h"
 #include "rviz/visualization_manager.h"
 #include "rviz/window_manager_interface.h"
+#include "std_msgs/Int16.h"
+#include "ros/ros.h"
 
 #include "rviz/render_panel.h"
 
@@ -57,6 +61,19 @@ RenderPanel::RenderPanel( QWidget* parent )
   , context_menu_visible_(false)
 {
   setFocus( Qt::OtherFocusReason );
+  
+  //add keyinme 20170620
+  //set position
+  label_battery -> move(0,0);
+  label_temperature -> move(0,25);
+  label_speed -> move(0,50);
+  label_battery -> adjustSize();
+  label_temperature -> adjustSize();
+  label_speed -> adjustSize();
+  //set Font color
+  label_battery -> setStyleSheet("QLineEdit{color:white;border:0px;background:rgba(0,0,0,127)}");  
+  label_temperature -> setStyleSheet("QLineEdit{color:white;border:0px;background:rgba(0,0,0,127)}");
+  label_speed -> setStyleSheet("QLineEdit{color:white;border:0px;background:rgba(0,0,0,127)}");
 }
 
 RenderPanel::~RenderPanel()
@@ -90,6 +107,42 @@ void RenderPanel::initialize(Ogre::SceneManager* scene_manager, DisplayContext* 
 
   connect( fake_mouse_move_event_timer_, SIGNAL( timeout() ), this, SLOT( sendMouseMoveEvent() ));
   fake_mouse_move_event_timer_->start( 33 /*milliseconds*/ );
+
+  //add keyinme 2017-06-20
+  subscribe();
+}
+
+void RenderPanel::incomingStatus(const std_msgs::Int16::ConstPtr& status_info)
+{
+  //const std_msgs::Int16& current_status = *status_info;
+  QString bat,tem,spe;
+  bat="Battery: " + QString::number(status_info->data) + "%";
+  tem="Temperature: " + QString::number(status_info->data) + "C";
+  spe="Speed: " + QString::number(status_info->data) + "m/s";
+  label_battery -> setText(bat);
+  label_temperature -> setText(tem);
+  label_speed -> setText(spe);   
+}
+
+void RenderPanel::subscribe()
+{
+
+  std::string status = "status";//status_topic_property_->getTopicStd();
+  status_sub.shutdown();
+    try
+    {
+      status_sub = update_nh.subscribe( status, 1000, &RenderPanel::incomingStatus, this );
+      //setStatus( StatusProperty::Ok, "Topic", "OK" );
+    }
+    catch( ros::Exception& e )
+    {
+      ROS_INFO("subscribing Error"); //setStatus( StatusProperty::Error, "Topic", QString("Error subscribing: ") + e.what() );
+    }
+}
+
+void RenderPanel::unsubscribe()
+{
+  status_sub.shutdown();
 }
 
 void RenderPanel::sendMouseMoveEvent()
